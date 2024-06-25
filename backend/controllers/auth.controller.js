@@ -6,7 +6,7 @@ export const SignUp = async (req, res, next) => {
   try {
     const { name, email, username } = req.body;
     console.log(req.body);
-    const userEmail = await User.findOne({ email });
+    const userEmail = await User.findOne({ $or: [{ email }, { username }] });
 
     if (userEmail) {
       return next(new ErrorHandler('User already exists', 400));
@@ -18,12 +18,10 @@ export const SignUp = async (req, res, next) => {
       username,
       password: hashPassword,
     });
-    const savedUser = await newUser.save();
-    console.log(savedUser);
-    const { password: pass, ...rest } = savedUser._doc;
+    await newUser.save();
     res.status(200).json({
       success: true,
-      message: rest,
+      message: 'The user has been successfully added.',
     });
   } catch (error) {
     console.log(`Error from api/auth/sigUp`, error.message);
@@ -52,6 +50,20 @@ export const signOut = (req, res, next) => {
   try {
     res.clearCookie('token').status(200).json('User has been signed out');
   } catch (error) {
-    next(error);
+    return next(new ErrorHandler('Internal server.', 500));
+  }
+};
+export const loadUser = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return next(new ErrorHandler('user is not login.', 500));
+    } else {
+      res.status(200).json({
+        success: true,
+        message: req.user,
+      });
+    }
+  } catch (error) {
+    return next(new ErrorHandler('Internal server.', 500));
   }
 };

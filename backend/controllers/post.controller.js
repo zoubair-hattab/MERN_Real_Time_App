@@ -81,7 +81,66 @@ export const likeUnlikePost = async (req, res, next) => {
 };
 export const replyToPost = async (req, res, next) => {
   try {
+    const { text } = req.body;
+    const postId = req.params.id;
+    const userId = req.user._id;
+    const userProfilePic = req.user.profilePic;
+    const username = req.user.username;
+
+    if (!text) {
+      return next(new ErrorHandler('Text field is required', 400));
+    }
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(new ErrorHandler('Post not found', 404));
+    }
+
+    const reply = { userId, text, userProfilePic, username };
+
+    post.replies.push(reply);
+    await post.save();
+
+    res.status(200).json(reply);
+  } catch (err) {
+    return next(new ErrorHandler(err.message, 500));
+  }
+};
+
+export const getFeedPosts = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(new ErrorHandler('User not found', 404));
+    }
+
+    const following = user.following;
+
+    const feedPosts = await Post.find({ postedBy: { $in: following } }).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json(feedPosts);
+  } catch (err) {
+    return next(new ErrorHandler(err.message, 500));
+  }
+};
+
+export const getUserPosts = async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const posts = await Post.find({ postedBy: user._id }).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json(posts);
   } catch (error) {
-    return next(new ErrorHandler(error.message, 500));
+    res.status(500).json({ error: error.message });
   }
 };

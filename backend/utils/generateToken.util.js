@@ -7,9 +7,16 @@ const generateToken = (user, statusCode, res) => {
     expiresIn: '2d',
   });
 
-  res.status(statusCode).cookie('token', token).json({
-    success: true,
-    message: user,
-  });
+  res
+    .status(statusCode)
+    .cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    })
+    .json({
+      success: true,
+      message: user,
+    });
 };
 export default generateToken;

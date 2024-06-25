@@ -1,16 +1,18 @@
 import jwt from 'jsonwebtoken';
 import ErrorHandler from '../utils/errorHnadler.js';
-export const isAuth = (req, res, next) => {
-  const token = req.cookies.token;
+import User from '../modeles/user.model.js';
+export const isAuth = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
 
-  if (!token) {
-    return next(new ErrorHandler('Unauthorized', 401));
-  }
-  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, user) => {
-    if (err) {
+    if (!token) {
       return next(new ErrorHandler('Unauthorized', 401));
     }
-    req.user = user.id;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const userdata = await User.findById(decoded.id).select('-password');
+    req.user = userdata;
     next();
-  });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
 };

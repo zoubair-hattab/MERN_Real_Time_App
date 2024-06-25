@@ -1,13 +1,38 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import {
+  signOutUserFailure,
+  signOutUserStart,
+  signOutUserSuccess,
+} from '../redux/reducers/userReducer';
 
 const Header = () => {
-  const auth = true;
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const handleSignOut = async (e) => {
+    try {
+      e.preventDefault();
+      dispatch(signOutUserStart());
+      const res = await fetch('/api/auth/signOut', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (data.error) {
+        dispatch(signOutUserFailure(data.message));
+      } else {
+        dispatch(signOutUserSuccess(data.message));
+      }
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message));
+    }
+  };
   return (
     <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
-          href="https://flowbite.com/"
+          to="/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img
@@ -16,13 +41,13 @@ const Header = () => {
             alt="Flowbite Logo"
           />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            Flowbite
+            Chat App
           </span>
         </Link>
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          {!auth ? (
+          {!currentUser ? (
             <Link
-              to=""
+              to="/signin"
               type="button"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
@@ -36,7 +61,7 @@ const Header = () => {
                 data-dropdown-toggle="userDropdown"
                 data-dropdown-placement="bottom-start"
                 className="w-10 h-10 rounded-full cursor-pointer"
-                src="https://ps.w.org/user-avatar-reloaded/assets/icon-256x256.png?rev=2540745"
+                src={currentUser?.profilePic?.url}
                 alt="User dropdown"
               />
 
@@ -45,45 +70,48 @@ const Header = () => {
                 className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
               >
                 <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                  <div>Bonnie Green</div>
-                  <div className="font-medium truncate">name@flowbite.com</div>
+                  <div>{currentUser?.username}</div>
+                  <div className="font-medium truncate">
+                    {currentUser?.email}
+                  </div>
                 </div>
                 <ul
                   className="py-2 text-sm text-gray-700 dark:text-gray-200"
                   aria-labelledby="avatarButton"
                 >
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="/profile"
                       className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
-                      Dashboard
-                    </a>
+                      Profile
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
                       Settings
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      to="#"
                       className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
                       Earnings
-                    </a>
+                    </Link>
                   </li>
                 </ul>
                 <div className="py-1">
-                  <a
-                    href="#"
+                  <Link
+                    to="#"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                    onClick={handleSignOut}
                   >
                     Sign out
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

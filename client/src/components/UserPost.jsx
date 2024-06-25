@@ -11,10 +11,7 @@ const UserPost = () => {
   const text =
     'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab at,nostrum ratione tenetur atque placeat, excepturi officiis explicabosoluta sit facilis assumenda, cumque iure quis repellendus saepe eligendi minus laboriosam!Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab at,nostrum ratione tenetur atque placeat, excepturi officiis explicabosoluta sit facilis assumenda, cumque iure quis repellendus saepe eligendi minus laboriosam!';
   return (
-    <Link
-      to="#"
-      className="max-w-screen-md mx-auto bg-white p-4 mt-4 flex gap-4"
-    >
+    <div className="max-w-screen-md mx-auto bg-white p-4 mt-4 flex gap-4">
       <div className="flex flex-col items-center">
         <img
           src="https://reputationprotectiononline.com/wp-content/uploads/2022/04/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
@@ -22,24 +19,24 @@ const UserPost = () => {
           className="w-10 h-10 rounded-full"
         />
         <div className="border border-gray-300 h-full my-1"></div>
-        <div class="flex -space-x-4 rtl:space-x-reverse">
+        <div className="flex -space-x-4 rtl:space-x-reverse">
           <img
-            class="w-6 h-6 border-2 border-white rounded-full dark:border-gray-800"
+            className="w-6 h-6 border-2 border-white rounded-full dark:border-gray-800"
             src="https://static.vecteezy.com/system/resources/thumbnails/004/707/493/small/online-shopping-on-phone-buy-sell-business-digital-web-banner-application-money-advertising-payment-ecommerce-illustration-search-vector.jpg"
             alt=""
           />
           <img
-            class="w-6 h-6 border-2 border-white rounded-full dark:border-gray-800"
+            className="w-6 h-6 border-2 border-white rounded-full dark:border-gray-800"
             src="https://static.vecteezy.com/system/resources/thumbnails/004/707/493/small/online-shopping-on-phone-buy-sell-business-digital-web-banner-application-money-advertising-payment-ecommerce-illustration-search-vector.jpg"
             alt=""
           />
 
-          <a
-            class="flex items-center justify-center w-6 h-6 text-xs font-medium text-white bg-gray-700 border-2 border-white rounded-full hover:bg-gray-600 dark:border-gray-800"
-            href="#"
+          <Link
+            className="flex items-center justify-center w-6 h-6 text-xs font-medium text-white bg-gray-700 border-2 border-white rounded-full hover:bg-gray-600 dark:border-gray-800"
+            to="#"
           >
             +99
-          </a>
+          </Link>
         </div>
       </div>
       <div className="flex-1 flex flex-col gap-3">
@@ -78,7 +75,7 @@ const UserPost = () => {
           <p className="text-gray-600 text-[14px]">Replies</p>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
